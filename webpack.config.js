@@ -4,6 +4,8 @@ const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 
 // const { ProvidePlugin } = require('webpack')
 // const loader = require('sass-loader')
@@ -56,7 +58,7 @@ module.exports = {
         plugins: [
           ['gifsicle', { interlaced: true }],
           ['jpegtran', { progressive: true }],
-          ['optipng', { optimizationLevel: 5 }],
+          ['optipng', { optimizationLevel: 5 }]
 
           // SVG's will be optimised using another plugin (hence ommitted here)
 
@@ -72,7 +74,11 @@ module.exports = {
           // ],
         ]
       }
-    })
+    }),
+
+    // plug-in for automatically cleaning out the public folder
+    new CleanWebpackPlugin()
+
   ],
 
   module: {
@@ -126,7 +132,7 @@ module.exports = {
             options: {
               severityError: 'warning', // Ignore errors on corrupted images
               minimizerOptions: {
-                plugins: ['gifsicle', 'jpegtran', 'optipng'],
+                plugins: ['gifsicle', 'jpegtran', 'optipng']
               }
             }
           }
@@ -169,5 +175,10 @@ module.exports = {
         exclude: /node_modules/
       }
     ]
+  },
+
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()]
   }
 }
